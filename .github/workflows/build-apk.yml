@@ -20,9 +20,6 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
@@ -30,10 +27,11 @@ jobs:
 
       - name: Build APK
         run: |
-          gradle --no-daemon assembleDebug --stacktrace
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: DAMKAR-TAPUT-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/outputs/apk/debug/*.apk
