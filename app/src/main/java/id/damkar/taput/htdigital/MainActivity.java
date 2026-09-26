@@ -1,346 +1,502 @@
-package id.damkar.taput.htdigital;
+package taput.htdigital;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
-    private TextView statusView;
-    private TextView taskView;
-    private TextView notificationView;
+    private static final String POSKO_HP = "+6285296150410";
+    private static final String POSKO_KANTOR = "063321113";
 
-    private static final String POSKO_NUMBER = "113";
+    private TextView statusText;
+    private TextView tugasText;
+    private TextView notifikasiText;
+
+    private String statusPersonel = "SIAP";
+    private String reguPersonel = "Regu 1 - Pos Damkar Tarutung";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        buildHome();
+
+        buatTampilan();
     }
 
-    private TextView createText(String text, float size) {
-        TextView tv = new TextView(this);
-        tv.setText(text);
-        tv.setTextSize(size);
-        tv.setTextColor(Color.DKGRAY);
-        tv.setPadding(20, 15, 20, 15);
-        return tv;
-    }
-
-    private Button createButton(String text) {
-        Button button = new Button(this);
-        button.setText(text);
-        button.setTextSize(16);
-        button.setAllCaps(false);
-        return button;
-    }
-
-    private void buildHome() {
+    private void buatTampilan() {
 
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(12, 12, 12, 12);
+        root.setPadding(14, 10, 14, 20);
 
-        TextView header =
-                createText("DAMKAR TAPUT HT DIGITAL", 21);
+        // =========================
+        // HEADER
+        // =========================
 
+        TextView header = new TextView(this);
+        header.setText("DAMKAR TAPUT HT DIGITAL");
+        header.setTextSize(24);
+        header.setTextColor(0xFFFFFFFF);
         header.setGravity(Gravity.CENTER);
-        header.setTextColor(Color.WHITE);
-        header.setBackgroundColor(Color.rgb(198, 40, 40));
+        header.setPadding(10, 18, 10, 18);
+        header.setBackgroundColor(0xFFC91D25);
 
-        root.addView(
-                header,
-                new LinearLayout.LayoutParams(
-                        -1,
-                        75
-                )
-        );
+        root.addView(header);
 
-        statusView =
-                createText("🟢 Status personel: SIAP", 18);
-        root.addView(statusView);
+        // =========================
+        // STATUS
+        // =========================
 
-        root.addView(
-                createText("👥 Regu: Regu Macan", 18)
-        );
+        statusText = new TextView(this);
+        statusText.setText("🟢 Status personel: " + statusPersonel);
+        statusText.setTextSize(22);
+        statusText.setPadding(8, 12, 8, 8);
 
-        taskView =
-                createText(
-                        "📢 Tugas Aktif\nBelum ada tugas aktif",
-                        17
-                );
-        root.addView(taskView);
+        root.addView(statusText);
 
-        notificationView =
-                createText(
-                        "🔔 Notifikasi\nTidak ada notifikasi baru",
-                        17
-                );
-        root.addView(notificationView);
+        // =========================
+        // REGU
+        // =========================
 
-        Button report =
-                createButton("🚨 LAPOR CEPAT KE POSKO");
+        TextView reguText = new TextView(this);
+        reguText.setText("👥 Regu: " + reguPersonel);
+        reguText.setTextSize(21);
+        reguText.setPadding(8, 8, 8, 8);
 
-        report.setOnClickListener(
-                v -> showReport()
-        );
+        root.addView(reguText);
 
-        root.addView(report);
+        // =========================
+        // TUGAS
+        // =========================
 
-        Button call =
-                createButton("📞 HUBUNGI POSKO");
+        TextView tugasLabel = new TextView(this);
+        tugasLabel.setText("📢 Tugas Aktif");
+        tugasLabel.setTextSize(21);
+        tugasLabel.setPadding(8, 8, 8, 2);
 
-        call.setOnClickListener(
-                v -> {
-                    Intent intent =
-                            new Intent(
-                                    Intent.ACTION_DIAL,
-                                    Uri.parse(
-                                            "tel:" + POSKO_NUMBER
-                                    )
-                            );
-                    startActivity(intent);
-                }
-        );
+        root.addView(tugasLabel);
 
-        root.addView(call);
+        tugasText = new TextView(this);
+        tugasText.setText("Belum ada tugas aktif");
+        tugasText.setTextSize(19);
+        tugasText.setPadding(8, 0, 8, 8);
 
-        Button status =
-                createButton("🟢 STATUS PERSONEL");
+        root.addView(tugasText);
 
-        status.setOnClickListener(
-                v -> showStatus()
-        );
+        // =========================
+        // NOTIFIKASI
+        // =========================
 
-        root.addView(status);
+        TextView notifikasiLabel = new TextView(this);
+        notifikasiLabel.setText("🔔 Notifikasi");
+        notifikasiLabel.setTextSize(21);
+        notifikasiLabel.setPadding(8, 8, 8, 2);
 
-        Button team =
-                createButton("👥 REGU & PERSONEL");
+        root.addView(notifikasiLabel);
 
-        team.setOnClickListener(
-                v -> showTeam()
-        );
+        notifikasiText = new TextView(this);
+        notifikasiText.setText("Status diperbarui: SIAP");
+        notifikasiText.setTextSize(19);
+        notifikasiText.setPadding(8, 0, 8, 10);
 
-        root.addView(team);
+        root.addView(notifikasiText);
 
-        Button ptt =
-                createButton("📻 HT DIGITAL / PTT");
+        // =========================
+        // LAPOR CEPAT
+        // =========================
 
-        ptt.setOnClickListener(
-                v -> showPTT()
-        );
+        Button laporButton = tombol("🚨  LAPOR CEPAT KE POSKO");
 
-        root.addView(ptt);
+        laporButton.setOnClickListener(v -> {
+            telepon(POSKO_HP);
+        });
 
-        setContentView(root);
+        root.addView(laporButton);
+
+        // =========================
+        // HUBUNGI POSKO
+        // =========================
+
+        Button hubungiButton = tombol("📞  HUBUNGI POSKO");
+
+        hubungiButton.setOnClickListener(v -> tampilkanKontakPosko());
+
+        root.addView(hubungiButton);
+
+        // =========================
+        // STATUS PERSONEL
+        // =========================
+
+        Button statusButton = tombol("🟢  STATUS PERSONEL");
+
+        statusButton.setOnClickListener(v -> tampilkanStatus());
+
+        root.addView(statusButton);
+
+        // =========================
+        // REGU & PERSONEL
+        // =========================
+
+        Button reguButton = tombol("👥  REGU & PERSONEL");
+
+        reguButton.setOnClickListener(v -> tampilkanRegu());
+
+        root.addView(reguButton);
+
+        // =========================
+        // HT DIGITAL / PTT
+        // =========================
+
+        Button pttButton = tombol("📻  HT DIGITAL / PTT");
+
+        pttButton.setOnClickListener(v -> tampilkanPTT());
+
+        root.addView(pttButton);
+
+        ScrollView scrollView = new ScrollView(this);
+        scrollView.addView(root);
+
+        setContentView(scrollView);
     }
 
-    private void showReport() {
+    // =====================================================
+    // TOMBOL
+    // =====================================================
 
-        LinearLayout layout =
-                new LinearLayout(this);
+    private Button tombol(String teks) {
 
-        layout.setOrientation(
-                LinearLayout.VERTICAL
-        );
+        Button button = new Button(this);
 
-        layout.setPadding(
-                25,
-                5,
-                25,
-                5
-        );
+        button.setText(teks);
+        button.setTextSize(18);
+        button.setAllCaps(false);
 
-        Spinner typeSpinner =
-                new Spinner(this);
-
-        String[] types = {
-                "Kebakaran",
-                "Kecelakaan",
-                "Penyelamatan",
-                "Pohon tumbang",
-                "Tawon/serangga",
-                "Banjir/bencana",
-                "Lainnya"
-        };
-
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(
-                        this,
-                        android.R.layout.simple_spinner_dropdown_item,
-                        types
+        LinearLayout.LayoutParams params =
+                new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
                 );
 
-        typeSpinner.setAdapter(adapter);
+        params.setMargins(0, 7, 0, 7);
 
-        layout.addView(typeSpinner);
+        button.setLayoutParams(params);
 
-        EditText location =
-                new EditText(this);
+        return button;
+    }
 
-        location.setHint("Lokasi kejadian");
+    // =====================================================
+    // TELEPON POSKO
+    // =====================================================
 
-        layout.addView(location);
+    private void telepon(String nomor) {
 
-        EditText description =
-                new EditText(this);
+        try {
 
-        description.setHint(
-                "Keterangan kejadian"
-        );
+            Intent intent = new Intent(
+                    Intent.ACTION_DIAL,
+                    Uri.parse("tel:" + nomor)
+            );
 
-        description.setMinLines(3);
+            startActivity(intent);
 
-        layout.addView(description);
+        } catch (Exception e) {
+
+            Toast.makeText(
+                    this,
+                    "Tidak dapat membuka telepon",
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+    }
+
+    // =====================================================
+    // KONTAK POSKO
+    // =====================================================
+
+    private void tampilkanKontakPosko() {
+
+        String[] pilihan = {
+                "📞 Posko 0633 21113",
+                "📱 Posko +62 852-9615-0410"
+        };
 
         new AlertDialog.Builder(this)
-                .setTitle("🚨 LAPOR CEPAT KE POSKO")
-                .setView(layout)
-                .setNegativeButton(
-                        "BATAL",
-                        null
-                )
-                .setPositiveButton(
-                        "KIRIM LAPORAN",
-                        (dialog, which) -> {
+                .setTitle("HUBUNGI POSKO")
+                .setItems(pilihan, (dialog, which) -> {
 
-                            String time =
-                                    new SimpleDateFormat(
-                                            "dd/MM/yyyy HH:mm",
-                                            Locale.getDefault()
-                                    ).format(
-                                            new Date()
-                                    );
+                    if (which == 0) {
+                        telepon(POSKO_KANTOR);
+                    } else {
+                        telepon(POSKO_HP);
+                    }
 
-                            String type =
-                                    typeSpinner
-                                            .getSelectedItem()
-                                            .toString();
-
-                            String loc =
-                                    location
-                                            .getText()
-                                            .toString();
-
-                            String desc =
-                                    description
-                                            .getText()
-                                            .toString();
-
-                            taskView.setText(
-                                    "📢 Tugas Aktif\n"
-                                    + type
-                                    + "\n📍 "
-                                    + loc
-                                    + "\n📝 "
-                                    + desc
-                                    + "\n⏰ "
-                                    + time
-                            );
-
-                            notificationView.setText(
-                                    "🔔 Notifikasi\n"
-                                    + "Laporan berhasil dikirim ke Posko"
-                            );
-
-                            Toast.makeText(
-                                    MainActivity.this,
-                                    "Laporan berhasil dikirim",
-                                    Toast.LENGTH_LONG
-                            ).show();
-                        }
-                )
+                })
+                .setNegativeButton("Tutup", null)
                 .show();
     }
 
-    private void showStatus() {
+    // =====================================================
+    // STATUS PERSONEL
+    // =====================================================
 
-        String[] statuses = {
-                "SIAP",
-                "OTW",
-                "TIBA",
-                "OPERASI",
-                "SELESAI"
+    private void tampilkanStatus() {
+
+        String[] status = {
+                "🟢 SIAP",
+                "🟡 OTW",
+                "🔵 TIBA",
+                "🟠 OPERASI",
+                "⚪ SELESAI"
         };
 
         new AlertDialog.Builder(this)
                 .setTitle("STATUS PERSONEL")
-                .setItems(
-                        statuses,
-                        (dialog, position) -> {
+                .setItems(status, (dialog, which) -> {
 
-                            String selected =
-                                    statuses[position];
+                    switch (which) {
 
-                            statusView.setText(
-                                    "🟢 Status personel: "
-                                    + selected
-                            );
+                        case 0:
+                            statusPersonel = "SIAP";
+                            break;
 
-                            notificationView.setText(
-                                    "🔔 Notifikasi\n"
-                                    + "Status diperbarui: "
-                                    + selected
-                            );
-                        }
-                )
+                        case 1:
+                            statusPersonel = "OTW";
+                            break;
+
+                        case 2:
+                            statusPersonel = "TIBA";
+                            break;
+
+                        case 3:
+                            statusPersonel = "OPERASI";
+                            break;
+
+                        case 4:
+                            statusPersonel = "SELESAI";
+                            break;
+                    }
+
+                    updateStatus();
+
+                })
+                .setNegativeButton("Tutup", null)
                 .show();
     }
 
-    private void showTeam() {
+    private void updateStatus() {
+
+        String tanda = "🟢";
+
+        if (statusPersonel.equals("OTW")) {
+            tanda = "🟡";
+        } else if (statusPersonel.equals("TIBA")) {
+            tanda = "🔵";
+        } else if (statusPersonel.equals("OPERASI")) {
+            tanda = "🟠";
+        } else if (statusPersonel.equals("SELESAI")) {
+            tanda = "⚪";
+        }
+
+        statusText.setText(
+                tanda + " Status personel: " + statusPersonel
+        );
+
+        notifikasiText.setText(
+                "Status diperbarui: " + statusPersonel
+        );
+
+        Toast.makeText(
+                this,
+                "Status: " + statusPersonel,
+                Toast.LENGTH_SHORT
+        ).show();
+    }
+
+    // =====================================================
+    // REGU & PERSONEL
+    // =====================================================
+
+    private void tampilkanRegu() {
+
+        String[] pos = {
+
+                "🚒 POS DAMKAR TARUTUNG\n" +
+                "Regu 1\n" +
+                "Regu 2\n" +
+                "Regu 3",
+
+                "🚒 POS DAMKAR SIBORONG-BORONG\n" +
+                "Regu 1\n" +
+                "Regu 2\n" +
+                "Regu 3",
+
+                "🚒 POS DAMKAR PAHAE\n" +
+                "Regu 1\n" +
+                "Regu 2\n" +
+                "Regu 3",
+
+                "🚒 POS DAMKAR PANGARIBUAN\n" +
+                "Regu 1\n" +
+                "Regu 2\n" +
+                "Regu 3"
+        };
 
         new AlertDialog.Builder(this)
-                .setTitle("👥 REGU MACAN")
-                .setMessage(
-                        "DAFTAR PERSONEL\n\n"
-                        + "01. Personel 01 — SIAP\n"
-                        + "02. Personel 02 — SIAP\n"
-                        + "03. Personel 03 — SIAP\n"
-                        + "04. Personel 04 — SIAP\n"
-                        + "05. Personel 05 — SIAP\n\n"
-                        + "Data personel nantinya "
-                        + "dapat dihubungkan ke Posko."
-                )
-                .setPositiveButton(
-                        "TUTUP",
-                        null
-                )
+                .setTitle("REGU & PERSONEL")
+                .setItems(pos, (dialog, which) -> {
+
+                    if (which == 0) {
+                        pilihRegu("Tarutung");
+                    } else if (which == 1) {
+                        pilihRegu("Siborong-borong");
+                    } else if (which == 2) {
+                        pilihRegu("Pahae");
+                    } else {
+                        pilihRegu("Pangaribuan");
+                    }
+
+                })
+                .setNegativeButton("Tutup", null)
                 .show();
     }
 
-    private void showPTT() {
+    private void pilihRegu(String namaPos) {
+
+        String[] regu = {
+                "Regu 1",
+                "Regu 2",
+                "Regu 3"
+        };
 
         new AlertDialog.Builder(this)
-                .setTitle("📻 HT DIGITAL / PTT")
-                .setMessage(
-                        "SALURAN: REGU MACAN\n\n"
-                        + "HT DIGITAL AKTIF\n\n"
-                        + "Tekan tombol PTT untuk "
-                        + "komunikasi suara.\n\n"
-                        + "Komunikasi realtime antar "
-                        + "perangkat akan membutuhkan "
-                        + "server/backend."
-                )
-                .setPositiveButton(
-                        "TUTUP",
-                        null
-                )
+                .setTitle("POS DAMKAR " + namaPos.toUpperCase())
+                .setItems(regu, (dialog, which) -> {
+
+                    reguPersonel =
+                            regu[which] +
+                            " - Pos Damkar " +
+                            namaPos;
+
+                    Toast.makeText(
+                            this,
+                            "Dipilih: " + reguPersonel,
+                            Toast.LENGTH_SHORT
+                    ).show();
+
+                })
+                .setNegativeButton("Kembali", null)
+                .show();
+    }
+
+    // =====================================================
+    // HT DIGITAL / PTT
+    // =====================================================
+
+    private void tampilkanPTT() {
+
+        String[] pilihan = {
+
+                "📡 Status koneksi",
+
+                "🎙️ Tekan & Bicara",
+
+                "👥 Pilih Regu Komunikasi",
+
+                "📢 Komunikasi Seluruh Personel"
+        };
+
+        new AlertDialog.Builder(this)
+                .setTitle("HT DIGITAL / PTT")
+                .setItems(pilihan, (dialog, which) -> {
+
+                    if (which == 0) {
+
+                        new AlertDialog.Builder(this)
+                                .setTitle("STATUS HT DIGITAL")
+                                .setMessage(
+                                        "Status: BELUM TERHUBUNG\n\n" +
+                                        "PTT antarperangkat membutuhkan " +
+                                        "server komunikasi internet."
+                                )
+                                .setPositiveButton("OK", null)
+                                .show();
+
+                    } else if (which == 1) {
+
+                        new AlertDialog.Builder(this)
+                                .setTitle("PTT")
+                                .setMessage(
+                                        "Fungsi Tekan & Bicara akan " +
+                                        "mengirim suara ke personel " +
+                                        "yang terhubung pada kanal yang sama."
+                                )
+                                .setPositiveButton("OK", null)
+                                .show();
+
+                    } else if (which == 2) {
+
+                        pilihKanalPTT();
+
+                    } else {
+
+                        new AlertDialog.Builder(this)
+                                .setTitle("KOMUNIKASI SELURUH PERSONEL")
+                                .setMessage(
+                                        "Kanal seluruh personel dipersiapkan " +
+                                        "untuk komunikasi HT Digital."
+                                )
+                                .setPositiveButton("OK", null)
+                                .show();
+                    }
+
+                })
+                .setNegativeButton("Tutup", null)
+                .show();
+    }
+
+    private void pilihKanalPTT() {
+
+        String[] kanal = {
+
+                "Tarutung - Regu 1",
+                "Tarutung - Regu 2",
+                "Tarutung - Regu 3",
+
+                "Siborong-borong - Regu 1",
+                "Siborong-borong - Regu 2",
+                "Siborong-borong - Regu 3",
+
+                "Pahae - Regu 1",
+                "Pahae - Regu 2",
+                "Pahae - Regu 3",
+
+                "Pangaribuan - Regu 1",
+                "Pangaribuan - Regu 2",
+                "Pangaribuan - Regu 3"
+        };
+
+        new AlertDialog.Builder(this)
+                .setTitle("PILIH KANAL HT")
+                .setItems(kanal, (dialog, which) -> {
+
+                    Toast.makeText(
+                            this,
+                            "Kanal dipilih: " + kanal[which],
+                            Toast.LENGTH_SHORT
+                    ).show();
+
+                })
+                .setNegativeButton("Tutup", null)
                 .show();
     }
 }
